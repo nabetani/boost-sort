@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <boost/sort/sort.hpp>
 #include <chrono>
+#include <functional>
 #include <random>
 #include <string>
 #include <vector>
@@ -15,23 +16,49 @@ std::vector<int> random_src(int seed, int size) {
   return vec;
 }
 
+std::vector<int> sorted_src(int size) {
+  std::vector<int> vec(size);
+  for (int i = 0; i < size; ++i) {
+    vec[i] = i;
+  }
+  return vec;
+}
+
+std::vector<int> reverse_src(int size) {
+  std::vector<int> vec(size);
+  for (int i = 0; i < size; ++i) {
+    vec[i] = size - i;
+  }
+  return vec;
+}
+
 void std_sort(std::vector<int> &v) { //
   std::sort(v.begin(), v.end());
 }
 
-using sorter_type = decltype(std_sort);
+void std_stable_sort(std::vector<int> &v) { //
+  std::stable_sort(v.begin(), v.end());
+}
 
-template <typename gen_type>
-void test(std::string const &title, sorter_type &sorter, gen_type gen,
-          bool production) {
+struct gen_t {
+  std::string name;
+  std::function<std::vector<int>()> proc;
+};
+
+struct sorter_t {
+  std::string name;
+  decltype(std_sort) *proc;
+};
+
+void test(sorter_t &sorter, gen_t const &gen, bool production) {
   using namespace std::chrono;
-  std::vector<int> v = gen();
+  std::vector<int> v = gen.proc();
   auto start = high_resolution_clock::now();
-  sorter(v);
+  sorter.proc(v);
   auto end = high_resolution_clock::now();
   auto ms = duration_cast<microseconds>(end - start).count() * 1e-3;
   if (production) {
-    std::cout << title
+    std::cout << sorter.name << ", " << gen.name
               << "\n"
                  "  res="
               << v[v.size() / 2]
@@ -42,10 +69,23 @@ void test(std::string const &title, sorter_type &sorter, gen_type gen,
 }
 
 void test(int seed, int size) {
+  gen_t gens[] = {
+      {"random", [&]() { return random_src(seed, size); }},
+      {"sorted", [&]() { return sorted_src(size); }},
+      {"reverse", [&]() { return reverse_src(size); }},
+  };
+
+  sorter_t sorters[] = {
+      {"std::sort", std_sort},
+      {"std::stable_sort", std_stable_sort},
+  };
+
   for (int i = 0; i < 3; ++i) {
-    test(
-        "std_sort random_src", std_sort,
-        [&]() { return random_src(seed, size); }, 2 <= i);
+    for (auto sorter : sorters) {
+      for (auto const &gen : gens) {
+        test(sorter, gen, 2 <= i);
+      }
+    }
   }
 }
 
