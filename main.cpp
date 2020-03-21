@@ -103,7 +103,7 @@ void test(int seed, int size) {
   gen_t gens[] = {
       {"random", [&]() { return random_src(seed, size); }},
       {"sorted", [&]() { return sorted_src(size); }},
-      {"almost_sorted", [&]() { return almost_sorted_src(seed, size, 0.01); }},
+      {"almost_sorted", [&]() { return almost_sorted_src(seed, size, 0.001); }},
       {"reverse", [&]() { return reverse_src(size); }},
   };
 
