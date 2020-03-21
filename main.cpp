@@ -28,6 +28,17 @@ std::vector<int> sorted_src(int size) {
   return vec;
 }
 
+std::vector<int> almost_sorted_src(int seed, int size, double ratio) {
+  auto v = sorted_src(size);
+  std::mt19937_64 rng(seed);
+  std::uniform_int_distribution<int> dist(0, size - 1);
+  for (int i = 0; i < size * ratio; ++i) {
+    int a = dist(rng);
+    int b = dist(rng);
+    std::swap(v[a], v[b]);
+  }
+  return v;
+}
 std::vector<int> reverse_src(int size) {
   std::vector<int> vec(size);
   for (int i = 0; i < size; ++i) {
@@ -92,6 +103,7 @@ void test(int seed, int size) {
   gen_t gens[] = {
       {"random", [&]() { return random_src(seed, size); }},
       {"sorted", [&]() { return sorted_src(size); }},
+      {"almost_sorted", [&]() { return almost_sorted_src(seed, size, 0.01); }},
       {"reverse", [&]() { return reverse_src(size); }},
   };
 
