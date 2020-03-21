@@ -10,10 +10,10 @@
 #include <string>
 #include <vector>
 
-std::vector<int> random_src(int seed, int size) {
+std::vector<int> random_src(int seed, int size, int max) {
   std::vector<int> vec(size);
   std::mt19937_64 rng(seed);
-  std::uniform_int_distribution<int> dist(0, (1 << 30));
+  std::uniform_int_distribution<int> dist(0, max);
   for (auto &e : vec) {
     e = dist(rng);
   }
@@ -81,6 +81,12 @@ struct sorter_t {
   decltype(std_sort) *proc;
 };
 
+#if defined __clang__
+#define CXX_NAME "clang"
+#elif 9 == __GNUC__
+#define CXX_NAME "g++-9"
+#endif
+
 void test(sorter_t &sorter, gen_t const &gen, bool production) {
   using namespace std::chrono;
   std::vector<int> v = gen.proc();
@@ -89,19 +95,17 @@ void test(sorter_t &sorter, gen_t const &gen, bool production) {
   auto end = high_resolution_clock::now();
   auto ms = duration_cast<microseconds>(end - start).count() * 1e-3;
   if (production) {
-    std::cout << sorter.name << ", " << gen.name
-              << "\n"
-                 "  res="
-              << v[v.size() / 2]
-              << "\n"
-                 "  tick="
-              << ms << "ms\n";
+    std::cout << CXX_NAME << ","                       //
+              << sorter.name << "," << gen.name << "," //
+              << v[v.size() / 2] << ","                //
+              << ms << "\n";
   }
 }
 
 void test(int seed, int size) {
   gen_t gens[] = {
-      {"random", [&]() { return random_src(seed, size); }},
+      {"random", [&]() { return random_src(seed, size, 1 << 30); }},
+      {"few_types", [&]() { return random_src(seed, size, 8); }},
       {"sorted", [&]() { return sorted_src(size); }},
       {"almost_sorted", [&]() { return almost_sorted_src(seed, size, 0.001); }},
       {"reverse", [&]() { return reverse_src(size); }},
