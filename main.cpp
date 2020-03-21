@@ -87,7 +87,7 @@ struct sorter_t {
 #define CXX_NAME "g++-9"
 #endif
 
-void test(sorter_t &sorter, gen_t const &gen, bool production) {
+void test(int size, sorter_t &sorter, gen_t const &gen, bool production) {
   using namespace std::chrono;
   std::vector<int> v = gen.proc();
   auto start = high_resolution_clock::now();
@@ -97,6 +97,7 @@ void test(sorter_t &sorter, gen_t const &gen, bool production) {
   if (production) {
     std::cout << CXX_NAME << ","                       //
               << sorter.name << "," << gen.name << "," //
+              << size << ","                           //
               << v[v.size() / 2] << ","                //
               << ms << "\n";
   }
@@ -123,14 +124,14 @@ void test(int seed, int size) {
   for (int i = 0; i < 3; ++i) {
     for (auto sorter : sorters) {
       for (auto const &gen : gens) {
-        test(sorter, gen, 2 <= i);
+        test(size, sorter, gen, 2 <= i);
       }
     }
   }
 }
 
 int main(int argc, char const *argv[]) {
-  int seed = argc < 2 ? 0 : std::atoi(argv[1]);
-  int size = argc < 3 ? 1'000'000 : std::atoi(argv[2]);
+  int size = argc < 2 ? 1'000'000 : std::atoi(argv[1]);
+  int seed = argc < 3 ? 0 : std::atoi(argv[2]);
   test(seed, size);
 }
