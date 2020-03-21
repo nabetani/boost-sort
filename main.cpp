@@ -1,7 +1,11 @@
 #include <algorithm>
-#include <boost/sort/sort.hpp>
+#include <boost/sort/flat_stable_sort/flat_stable_sort.hpp>
+#include <boost/sort/pdqsort/pdqsort.hpp>
+#include <boost/sort/spinsort/spinsort.hpp>
+#include <boost/sort/spreadsort/integer_sort.hpp>
 #include <chrono>
 #include <functional>
+#include <iostream>
 #include <random>
 #include <string>
 #include <vector>
@@ -34,6 +38,22 @@ std::vector<int> reverse_src(int size) {
 
 void std_sort(std::vector<int> &v) { //
   std::sort(v.begin(), v.end());
+}
+
+void boost_pdqsort(std::vector<int> &v) { //
+  boost::sort::pdqsort(v.begin(), v.end());
+}
+
+void boost_spread(std::vector<int> &v) { //
+  boost::sort::spreadsort::integer_sort(v.begin(), v.end());
+}
+
+void boost_flat_stable_sort(std::vector<int> &v) { //
+  boost::sort::flat::flat_stable_sort(v.begin(), v.end());
+}
+
+void boost_spin(std::vector<int> &v) { //
+  boost::sort::spinsort(v.begin(), v.end());
 }
 
 void std_stable_sort(std::vector<int> &v) { //
@@ -78,6 +98,10 @@ void test(int seed, int size) {
   sorter_t sorters[] = {
       {"std::sort", std_sort},
       {"std::stable_sort", std_stable_sort},
+      {"boost/pdq_sort", boost_pdqsort},
+      {"boost/flat_stable_sort", boost_flat_stable_sort},
+      {"boost/spread", boost_spread},
+      {"boost/spin", boost_spin},
   };
 
   for (int i = 0; i < 3; ++i) {
