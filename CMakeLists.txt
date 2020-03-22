@@ -11,7 +11,7 @@ set( INCLUDE_PATH
 find_package(
   Boost 1.72
   REQUIRED
-  COMPONENTS system)
+)
 
 set(Boost_USE_STATIC_LIBS    ON)
 set(Boost_USE_MULTITHREADED  ON)

@@ -1,0 +1,32 @@
+{
+  // IntelliSense を使用して利用可能な属性を学べます。
+  // 既存の属性の説明をホバーして表示します。
+  // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "clang",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/clang/release/sample.out",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/clang/release/",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb"
+    },
+    {
+      "name": "gcc9",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/gcc9/release/sample.out",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/gcc9/release/",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb"
+    }
+  ]
+}
